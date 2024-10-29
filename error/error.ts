@@ -36,27 +36,39 @@
  * example();
  * */
 function catchErrorTyped<T, E extends new (message?: string) => Error>(
-    promise: Promise<T>,
-    errorsToCatch?: E[],
+  promise: Promise<T>,
+  errorsToCatch?: E[],
 ): Promise<[undefined, T] | [InstanceType<E>]> {
-    return promise
-        .then((data) => {
-            return [undefined, data] as [undefined, T];
-        })
+  return promise
+    .then((data) => {
+      return [undefined, data] as [undefined, T];
+    })
 
-        .catch((error) => {
-            if (errorsToCatch == undefined) {
-                return [error];
-            }
-            if (errorsToCatch.some((e) => error instanceof e)) {
-                return [error];
-            }
-            throw error;
-        });
+    .catch((error) => {
+      if (errorsToCatch == undefined) {
+        return [error];
+      }
+      if (errorsToCatch.some((e) => error instanceof e)) {
+        return [error];
+      }
+      throw error;
+    });
 }
 
 // example of error usage
 class CustomError extends Error {
-    name = "CustomError";
-    extraProp = "ERROR: test";
+  name = "CustomError";
+  extraProp = "ERROR: test";
+}
+
+export function catchError<T>(
+  promise: Promise<T>,
+): Promise<[undefined, T] | [Error]> {
+  return promise
+    .then((data) => {
+      return [undefined, data] as [undefined, T];
+    })
+    .catch((error) => {
+      return [error];
+    });
 }
